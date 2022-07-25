@@ -1,23 +1,22 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header reveal>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-        />
-
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v</div>
+        <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />
+        <q-toolbar-title>Quasar Protogram</q-toolbar-title>
       </q-toolbar>
     </q-header>
 
+    <q-footer class="bg-white" bordered>
+        <q-tabs
+          indicator-color="transparent"
+          class="text-grey-10"
+          active-color="primary"
+        >
+          <q-route-tab to="/" name="home" icon="eva-home-outline" />
+          <q-route-tab to="/camera" name="camera" icon="eva-camera-outline" />
+        </q-tabs>
+    </q-footer>
 
     <q-page-container>
       <router-view />
@@ -43,3 +42,11 @@ export default {
 
 }
 </script>
+
+<style lang="scss">
+  .q-footer {
+    .q-tab__icon {
+      font-size: 30px;
+    }
+  }
+</style>
