@@ -1,1 +1,40 @@
 // app global css in SCSS form
+
+.text-main-headers {
+  font-family: 'Edu TAS Beginner', 'Helvetica Neue', Helvetica, Arial;
+}
+
+
+.small-screen-only {
+    @media (max-width: $breakpoint-xs-max) {
+        display: block;
+    }
+
+    @media (min-width: $breakpoint-sm-min) {
+        display: none;
+    }
+}
+
+.large-screen-only {
+    @media (max-width: $breakpoint-xs-max) {
+        display: none;
+    }
+
+    @media (min-width: $breakpoint-sm-min) {
+        display: block;
+    }
+}
+
+.standart-margin-bottom {
+    margin-bottom: 25px;
+}
+
+.constarain {
+    max-width: 975px;
+    margin: 0 auto;
+}
+
+.constarain-more {
+    max-width: 600px;
+    margin: 0 auto;
+}
