@@ -97,6 +97,8 @@ export default {
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       this.imageCaptured = true;
       this.post.photo = this.dataURItoBlob(canvas.toDataURL());
+
+      this.disableCamera();
     },
   
     captureImageFallback(inputEvent) {
@@ -138,11 +140,21 @@ export default {
       // write the ArrayBuffer to a blob, and you're done
       const blob = new Blob([ab], { type: mimeString });
       return blob;
-    }
+    },
+    disableCamera() {
+      this.$refs.video.srcObject.getVideoTracks().forEach(track => {
+        track.stop();
+      });
+    },
   },
   mounted() {
     this.initCamera();
-  }
+  },
+  beforeUnmount() {
+    if (this.hasCameraSupport) {
+      this.disableCamera();
+    }
+  },
 }
 </script>
 
