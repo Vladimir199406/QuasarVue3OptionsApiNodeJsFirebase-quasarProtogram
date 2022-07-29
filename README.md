@@ -9,9 +9,15 @@ yarn
 npm install
 ```
 
-### Start the app in development mode (hot-code reloading, error reporting, etc.)
+### Start the app CLIENT in development mode (hot-code reloading, error reporting, etc.)
 ```bash
 quasar dev
+```
+
+### Start the app BACK in development mode (hot-code reloading, error reporting, etc.)
+```bash
+cd ./backend
+npm start
 ```
 
 
