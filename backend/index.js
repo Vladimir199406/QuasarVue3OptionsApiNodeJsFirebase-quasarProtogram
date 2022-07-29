@@ -1,4 +1,27 @@
 /*
+ firebase
+*/
+
+const {
+  initializeApp,
+  applicationDefault,
+  cert,
+} = require("firebase-admin/app");
+const {
+  getFirestore,
+  Timestamp,
+  FieldValue,
+} = require("firebase-admin/firestore");
+
+const serviceAccount = require("./serviceAccountKey.json");
+
+initializeApp({
+  credential: cert(serviceAccount),
+});
+
+const db = getFirestore();
+
+/*
  dependencies
 */
 
@@ -14,17 +37,17 @@ const app = express();
 */
 
 app.get("/posts", (request, response) => {
-  let posts = [
-    {
-      caption: "Home",
-      location: "Balashiha, Russia",
-    },
-    {
-      caption: "London Eye",
-      location: "London",
-    },
-  ];
-  response.send(posts);
+  let posts = [];
+
+  db.collection("posts")
+    .get()
+    .then((snapshot) => {
+      snapshot.forEach((doc) => {
+        console.log(doc.id, "=>", doc.data());
+        posts.push(doc.data());
+      });
+      response.send(posts);
+    });
 });
 
 /*
