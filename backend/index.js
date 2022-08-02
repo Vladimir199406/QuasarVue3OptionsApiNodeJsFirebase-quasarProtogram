@@ -12,14 +12,17 @@ const {
   Timestamp,
   FieldValue,
 } = require("firebase-admin/firestore");
+const { getStorage } = require('firebase-admin/storage');
 
 const serviceAccount = require("./serviceAccountKey.json");
 
 initializeApp({
   credential: cert(serviceAccount),
+  storageBucket: 'quasar-protogram.appspot.com/files'
 });
 
 const db = getFirestore();
+const bucket = getStorage().bucket();
 
 /*
  dependencies
@@ -28,6 +31,11 @@ const db = getFirestore();
 const express = require("express");
 let inspect = require("util").inspect;
 let Busboy = require("busboy");
+let path = require('path');
+let os = require('os');
+let fs = require("fs");
+let UUID = require("uuid-v4");
+
 /*
  config -express
 */
@@ -61,8 +69,11 @@ app.get("/posts", (request, response) => {
 app.post("/createPost", (request, response) => {
   response.set("Access-Control-Allow-Origin", "*");
 
+  let uuid = UUID();
+
   const bb = Busboy({ headers: request.headers });
   let fields = {};
+  let fileData ={};
 
   bb.on("file", (name, file, info) => {
     const { filename, encoding, mimeType } = info;
@@ -72,13 +83,10 @@ app.post("/createPost", (request, response) => {
       encoding,
       mimeType
     );
-    file
-      .on("data", (data) => {
-        console.log(`File [${name}] got ${data.length} bytes`);
-      })
-      .on("close", () => {
-        console.log(`File [${name}] done`);
-      });
+
+    let filePath = path.join(os.tmpdir(), filename);
+    file.pipe(fs.createWriteStream(filePath));
+    fileData = {filePath, mimeType};
   });
 
   bb.on("field", (name, val, info) => {
@@ -87,9 +95,37 @@ app.post("/createPost", (request, response) => {
   });
 
   bb.on("close", () => {
-    console.log("fields", fields);
-    response.send('Done parsing form!');
-    response.end();
+    bucket.upload(
+      fileData.filePath,
+      {
+        uploadType: "media",
+        metadata: {
+          metadata: {
+            contentType: fileData.mimeType,
+            firebaseStorageDownloadTokens: uuid,
+          }
+        },
+      },
+      (error, uploadedFile) => {
+        if (!error) {
+          createDocument(uploadedFile);
+        }
+      }
+    );
+
+    function createDocument(uploadedFile) {
+      db.collection('posts').doc(fields.id).set({
+        id: fields.id,
+        caption: fields.caption,
+        location: fields.location,
+        date: parseInt(fields.date),
+        imageUrl: 
+        `https://firebasestorage.googleapis.com/v0/b/quasar-protogram.appspot.com/o/${uploadedFile.name}?alt=media&token=${uuid}`,
+      }).then(() => {
+        console.log("response.data", response.data)
+        response.send('Post added: ' + fields.id)
+      });
+    }
   });
 
   request.pipe(bb);
