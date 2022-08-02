@@ -26,7 +26,8 @@ const db = getFirestore();
 */
 
 const express = require("express");
-
+let inspect = require("util").inspect;
+let Busboy = require("busboy");
 /*
  config -express
 */
@@ -37,11 +38,12 @@ const app = express();
 */
 
 app.get("/posts", (request, response) => {
-  response.set('Access-Control-Allow-Origin', '*');
+  response.set("Access-Control-Allow-Origin", "*");
 
   let posts = [];
 
-  db.collection("posts").orderBy('date', 'desc')
+  db.collection("posts")
+    .orderBy("date", "desc")
     .get()
     .then((snapshot) => {
       snapshot.forEach((doc) => {
@@ -50,6 +52,47 @@ app.get("/posts", (request, response) => {
       });
       response.send(posts);
     });
+});
+
+/*
+ endpoint -createPost
+*/
+
+app.post("/createPost", (request, response) => {
+  response.set("Access-Control-Allow-Origin", "*");
+
+  const bb = Busboy({ headers: request.headers });
+  let fields = {};
+
+  bb.on("file", (name, file, info) => {
+    const { filename, encoding, mimeType } = info;
+    console.log(
+      `File [${name}]: filename: %j, encoding: %j, mimeType: %j`,
+      filename,
+      encoding,
+      mimeType
+    );
+    file
+      .on("data", (data) => {
+        console.log(`File [${name}] got ${data.length} bytes`);
+      })
+      .on("close", () => {
+        console.log(`File [${name}] done`);
+      });
+  });
+
+  bb.on("field", (name, val, info) => {
+    console.log(`Field [${name}]: value: %j`, val);
+    fields[name] = val;
+  });
+
+  bb.on("close", () => {
+    console.log("fields", fields);
+    response.send('Done parsing form!');
+    response.end();
+  });
+
+  request.pipe(bb);
 });
 
 /*
