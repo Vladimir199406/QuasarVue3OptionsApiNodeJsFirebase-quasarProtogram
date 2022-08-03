@@ -9,6 +9,9 @@
 // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js
 
 
+
+const API_LOCAL = "http://localhost:3000";
+
 const { configure } = require('quasar/wrappers');
 
 module.exports = configure(function (ctx) {
@@ -48,6 +51,9 @@ module.exports = configure(function (ctx) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-build
     build: {
+      env: {
+        API: API_LOCAL,
+      },
       vueRouterMode: 'hash', // available values: 'hash', 'history'
 
       // transpile: false,
