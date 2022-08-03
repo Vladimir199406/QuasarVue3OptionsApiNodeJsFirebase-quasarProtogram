@@ -18,11 +18,11 @@ const serviceAccount = require("./serviceAccountKey.json");
 
 initializeApp({
   credential: cert(serviceAccount),
-  storageBucket: 'quasar-protogram.appspot.com/files'
+  storageBucket: 'quasar-protogram.appspot.com'
 });
 
 const db = getFirestore();
-const bucket = getStorage().bucket();
+let bucket = getStorage().bucket();
 
 /*
  dependencies
@@ -120,11 +120,10 @@ app.post("/createPost", (request, response) => {
         location: fields.location,
         date: parseInt(fields.date),
         imageUrl: 
-        `https://firebasestorage.googleapis.com/v0/b/quasar-protogram.appspot.com/o/${uploadedFile.name}?alt=media&token=${uuid}`,
+        `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${uploadedFile.name}?alt=media&token=${uuid}`,
       }).then(() => {
-        console.log("response.data", response.data)
-        response.send('Post added: ' + fields.id)
-      });
+        response.send('Post added:' + fields.id)
+      })
     }
   });
 

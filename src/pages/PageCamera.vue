@@ -210,7 +210,7 @@ export default {
       formData.append('caption', this.post.caption);
       formData.append('location', this.post.location);
       formData.append('date', this.post.date);
-      formData.append('file', this.post.photo, this.post.id + 'png');
+      formData.append('file', this.post.photo, `${this.post.id}png`);
 
       axios.post(`${process.env.API}/createPost`, formData)
       .then((response) => {

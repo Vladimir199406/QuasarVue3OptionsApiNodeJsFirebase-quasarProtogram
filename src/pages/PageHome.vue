@@ -2,7 +2,7 @@
   <q-page class="constarain q-pa-md">
     <div class="row q-col-gutter-lg">
       <div class="col-12 col-sm-8">
-        <template v-if="!laodingPosts && posts.length">
+        <template v-if="!loadingPosts && posts.length">
           <q-card
             class="my-card q-mb-md"
             flat
@@ -85,7 +85,7 @@ export default {
   data() {
     return {
       posts: [],
-      laodingPosts: false,
+      loadingPosts: false,
     };
   },
   methods: {
@@ -95,20 +95,20 @@ export default {
       return formattedDate;
     },
     getPosts() {
-      this.laodingPosts = true;
+      this.loadingPosts = true;
 
       axios
         .get(`${process.env.API}/posts`)
         .then((response) => {
           this.posts = response.data;
-          this.laodingPosts = false;
+          this.loadingPosts = false;
         })
         .catch((error) => {
           this.$q.dialog({
             title: "Error",
             message: "Could not get posts.",
           });
-          this.laodingPosts = false;
+          this.loadingPosts = false;
         });
     },
   },
