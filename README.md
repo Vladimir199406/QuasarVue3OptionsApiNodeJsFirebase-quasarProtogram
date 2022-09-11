@@ -17,6 +17,7 @@ quasar dev
 ### Start the app BACK in development mode (hot-code reloading, error reporting, etc.)
 ```bash
 cd ./backend
+npm install
 npm start
 ```
 
